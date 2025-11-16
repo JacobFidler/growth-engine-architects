@@ -1,5 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Workflow, Wrench, TrendingUp, Database } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 const services = [
   {
@@ -50,11 +51,48 @@ const services = [
 ];
 
 const Services = () => {
+  const [visibleCards, setVisibleCards] = useState<boolean[]>(new Array(services.length).fill(false));
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = cardRefs.current.indexOf(entry.target as HTMLDivElement);
+            if (index !== -1) {
+              setTimeout(() => {
+                setVisibleCards(prev => {
+                  const newState = [...prev];
+                  newState[index] = true;
+                  return newState;
+                });
+              }, index * 100);
+            }
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    cardRefs.current.forEach(ref => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section id="services" className="py-20 bg-muted/30">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+    <section id="services" className="py-20 bg-gradient-to-b from-background via-muted/20 to-background relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-16 animate-slide-up">
+          <div className="inline-block mb-4">
+            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Our Services</span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
             5 Key Areas Where We Help Businesses Grow
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -64,24 +102,40 @@ const Services = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {services.map((service, index) => (
-            <Card key={index} className="border-border hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <service.icon className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle className="text-xl">{service.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {service.points.map((point, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+            <div
+              key={index}
+              ref={el => cardRefs.current[index] = el}
+              className={`transition-all duration-700 ${
+                visibleCards[index] 
+                  ? 'opacity-100 translate-y-0' 
+                  : 'opacity-0 translate-y-8'
+              }`}
+            >
+              <Card className="h-full border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover-lift hover:shadow-lg group relative overflow-hidden bg-gradient-to-br from-card via-card to-primary/5">
+                {/* Shine effect on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                
+                <CardHeader className="relative z-10">
+                  <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-shadow group-hover:scale-110 duration-300">
+                    <service.icon className="h-7 w-7 text-primary-foreground" />
+                  </div>
+                  <CardTitle className="text-xl group-hover:text-primary transition-colors duration-300">
+                    {service.title}
+                  </CardTitle>
+                </CardHeader>
+                
+                <CardContent className="relative z-10">
+                  <ul className="space-y-3">
+                    {service.points.map((point, i) => (
+                      <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                        <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5 group-hover:scale-110 transition-transform duration-300" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
           ))}
         </div>
       </div>
