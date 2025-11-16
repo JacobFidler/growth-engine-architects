@@ -3,22 +3,38 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin, Linkedin } from "lucide-react";
-import { useState } from "react";
+import { Mail, Phone, MapPin, Linkedin, Send } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const Contact = () => {
   const { toast } = useToast();
+  const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: ""
   });
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const element = document.getElementById('contact');
+    if (element) observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Create mailto link with form data
     const subject = encodeURIComponent(`Contact from ${formData.name}`);
     const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
     window.location.href = `mailto:jacob@scalifyingai.com?subject=${subject}&body=${body}`;
@@ -36,11 +52,44 @@ const Contact = () => {
     }));
   };
 
+  const contactInfo = [
+    {
+      icon: Mail,
+      label: "Email",
+      value: "jacob@scalifyingai.com",
+      href: "mailto:jacob@scalifyingai.com"
+    },
+    {
+      icon: Phone,
+      label: "Phone",
+      value: "817-913-8509",
+      href: "tel:817-913-8509"
+    },
+    {
+      icon: MapPin,
+      label: "Address",
+      value: "12601 Lignite Dr\nDenton, TX 76207",
+      href: null
+    },
+    {
+      icon: Linkedin,
+      label: "LinkedIn",
+      value: "Connect on LinkedIn",
+      href: "https://www.linkedin.com/in/jacob-fidler"
+    }
+  ];
+
   return (
-    <section id="contact" className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+    <section id="contact" className="py-20 bg-gradient-to-b from-background via-muted/20 to-background relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="inline-block mb-4">
+            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Contact</span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
             Get In Touch
           </h2>
           <p className="text-lg text-muted-foreground">
@@ -49,110 +98,95 @@ const Contact = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          <Card className="border-border">
+          <Card className={`border-2 border-border/50 shadow-lg hover:shadow-xl transition-all duration-500 hover-lift ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`} style={{ transitionDelay: '0.1s' }}>
             <CardHeader>
-              <CardTitle>Contact Information</CardTitle>
+              <CardTitle className="text-2xl">Contact Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <Mail className="h-5 w-5 text-primary" />
+              {contactInfo.map((info, index) => (
+                <div 
+                  key={index}
+                  className="flex items-start gap-4 group p-3 rounded-lg hover:bg-primary/5 transition-all duration-300"
+                >
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 group-hover:shadow-lg">
+                    <info.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground mb-1">{info.label}</p>
+                    {info.href ? (
+                      <a 
+                        href={info.href}
+                        target={info.icon === Linkedin ? "_blank" : undefined}
+                        rel={info.icon === Linkedin ? "noopener noreferrer" : undefined}
+                        className="text-muted-foreground hover:text-primary transition-colors duration-300 group-hover:translate-x-1 inline-block"
+                      >
+                        {info.value}
+                      </a>
+                    ) : (
+                      <p className="text-muted-foreground whitespace-pre-line">{info.value}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-foreground">Email</p>
-                  <a href="mailto:jacob@scalifyingai.com" className="text-muted-foreground hover:text-primary transition-colors">
-                    jacob@scalifyingai.com
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <Phone className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground">Phone</p>
-                  <a href="tel:817-913-8509" className="text-muted-foreground hover:text-primary transition-colors">
-                    817-913-8509
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <MapPin className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground">Address</p>
-                  <p className="text-muted-foreground">
-                    12601 Lignite Dr<br />
-                    Denton, TX 76207
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <Linkedin className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground">LinkedIn</p>
-                  <a 
-                    href="https://www.linkedin.com/in/jacob-fidler" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    Connect on LinkedIn
-                  </a>
-                </div>
-              </div>
+              ))}
             </CardContent>
           </Card>
 
-          <Card className="border-border">
+          <Card className={`border-2 border-border/50 shadow-lg hover:shadow-xl transition-all duration-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`} style={{ transitionDelay: '0.2s' }}>
             <CardHeader>
-              <CardTitle>Send a Message</CardTitle>
+              <CardTitle className="text-2xl">Send a Message</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Name</Label>
-                  <Input 
-                    id="name" 
+                  <Input
+                    id="name"
                     name="name"
-                    placeholder="Your name" 
-                    required 
                     value={formData.name}
                     onChange={handleChange}
+                    placeholder="Your name"
+                    required
+                    className="border-2 focus:border-primary transition-colors duration-300"
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
+                  <Input
+                    id="email"
                     name="email"
-                    type="email" 
-                    placeholder="your.email@company.com" 
-                    required 
+                    type="email"
                     value={formData.email}
                     onChange={handleChange}
+                    placeholder="your.email@company.com"
+                    required
+                    className="border-2 focus:border-primary transition-colors duration-300"
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="message">Message</Label>
-                  <Textarea 
-                    id="message" 
+                  <Textarea
+                    id="message"
                     name="message"
-                    placeholder="Tell us about your business and how we can help..." 
-                    rows={5} 
-                    required 
                     value={formData.message}
                     onChange={handleChange}
+                    placeholder="Tell us about your business and how we can help..."
+                    rows={5}
+                    required
+                    className="border-2 focus:border-primary transition-colors duration-300 resize-none"
                   />
                 </div>
-                <Button type="submit" className="w-full">
-                  Send Message
+
+                <Button 
+                  type="submit" 
+                  className="w-full group relative overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    Send Message
+                    <Send className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                 </Button>
               </form>
             </CardContent>
