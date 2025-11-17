@@ -103,31 +103,30 @@ const Contact = () => {
               <CardTitle className="text-2xl">Contact Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {contactInfo.map((info, index) => (
-                <div 
-                  key={index}
-                  className="flex items-start gap-4 group p-3 rounded-lg hover:bg-primary/5 transition-all duration-300"
-                >
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 group-hover:shadow-lg">
-                    <info.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-foreground mb-1">{info.label}</p>
-                    {info.href ? (
-                      <a 
-                        href={info.href}
-                        target={info.icon === Linkedin ? "_blank" : undefined}
-                        rel={info.icon === Linkedin ? "noopener noreferrer" : undefined}
-                        className="text-muted-foreground hover:text-primary transition-colors duration-300 group-hover:translate-x-1 inline-block"
-                      >
+              {contactInfo.map((info, index) => {
+                const Wrapper: React.ElementType = info.href ? "a" : "div";
+                const isExternal = info.href && info.href.startsWith("http");
+
+                return (
+                  <Wrapper
+                    key={index}
+                    href={info.href || undefined}
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                    className="flex items-start gap-4 group p-3 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+                  >
+                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 group-hover:shadow-lg">
+                      <info.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground mb-1">{info.label}</p>
+                      <p className="text-muted-foreground whitespace-pre-line group-hover:text-primary transition-colors duration-300 group-hover:translate-x-1 inline-block">
                         {info.value}
-                      </a>
-                    ) : (
-                      <p className="text-muted-foreground whitespace-pre-line">{info.value}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
+                      </p>
+                    </div>
+                  </Wrapper>
+                );
+              })}
             </CardContent>
           </Card>
 
