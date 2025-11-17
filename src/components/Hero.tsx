@@ -53,7 +53,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="text-base group relative overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
-              onClick={() => window.open('https://calendly.com/scalifyingai', '_blank')}
+              onClick={() => window.open('https://calendly.com/jacob-fidler-scalifyingai/30min-1', '_blank')}
             >
               <span className="relative z-10">Schedule Strategy Call</span>
               <ArrowRight className="ml-2 h-5 w-5 relative z-10 transition-transform group-hover:translate-x-1" />
