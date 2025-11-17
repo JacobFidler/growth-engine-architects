@@ -68,7 +68,7 @@ const Contact = () => {
     {
       icon: MapPin,
       label: "Location",
-      value: "1Frisco, TX",
+      value: "Frisco, TX",
       href: null
     },
     {
