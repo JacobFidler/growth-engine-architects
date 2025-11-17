@@ -56,8 +56,8 @@ const Contact = () => {
     {
       icon: Mail,
       label: "Email",
-      value: "jacob@scalifyingai.com",
-      href: "mailto:jacob@scalifyingai.com"
+      value: "jacob.fidler@scalifyingai.com",
+      href: "mailto:jacob.fidler@scalifyingai.com"
     },
     {
       icon: Phone,
