@@ -67,15 +67,15 @@ const Contact = () => {
     },
     {
       icon: MapPin,
-      label: "Address",
-      value: "12601 Lignite Dr\nDenton, TX 76207",
+      label: "Location",
+      value: "1Frisco, TX",
       href: null
     },
     {
       icon: Linkedin,
       label: "LinkedIn",
       value: "Connect on LinkedIn",
-      href: "https://www.linkedin.com/in/jacob-fidler"
+      href: "https://www.linkedin.com/in/jacob-fidler-29b86666/"
     }
   ];
 
