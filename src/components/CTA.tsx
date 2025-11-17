@@ -71,7 +71,7 @@ const CTA = () => {
           <Button 
             size="lg" 
             className="text-base px-8 py-6 h-auto group relative overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-            onClick={() => window.open('https://calendly.com/scalifyingai', '_blank')}
+            onClick={() => window.open('https://calendly.com/jacob-fidler-scalifyingai/30min-1', '_blank')}
           >
             <span className="relative z-10 flex items-center gap-2">
               <Calendar className="h-5 w-5" />
